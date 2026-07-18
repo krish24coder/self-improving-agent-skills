@@ -1,185 +1,399 @@
-Self-Improving Agent Skills
-Automatically optimize your agent skills using a multi-agent system built with Google ADK (Agent Development Kit) and Gemini. Upload a skill, let the agents generate test scenarios and evaluation criteria, then watch as three specialized ADK agents collaborate to improve your skill through iterative optimization.
+# 🚀 Self-Improving Agent Skills
 
-Screenshot 2026-04-12 at 7 26 04 PM
-How It Works
-This app implements an automated skill improvement loop inspired by Karpathy's autoresearch methodology, powered by a team of ADK agents:
+> Automatically optimize AI agent skills using a collaborative **multi-agent system** powered by **Google ADK** and **Gemini**.
 
-Upload: Drop in your skill folder (following agentskills.io spec)
-Configure: The Executor agent generates test scenarios and evaluation criteria. Edit, add, or regenerate as needed
-Optimize: Three ADK agents collaborate — one executes and scores, one diagnoses failures, one applies fixes
-Results: Download your improved skill with a detailed changelog
-The ADK Agent Team
-Agent	Role	What It Does
-Executor	Skill Runner & Scorer	Executes the skill against test scenarios, scores outputs against evaluation criteria, and generates initial test scenarios during analysis
-Analyst	Failure Diagnostician	Examines failed evaluations, identifies root causes, and recommends a mutation strategy. Uses Pydantic output_schema for guaranteed structured JSON
-Mutator	Prompt Editor	Makes exactly ONE targeted change to the skill prompt based on the analyst's diagnosis. Uses Pydantic output_schema for guaranteed structured JSON
-The Optimization Loop
-The Executor agent runs the skill against all test scenarios
-The Executor then scores each output against binary yes/no evaluation criteria
-The Analyst agent diagnoses failure patterns and picks a strategy (add_example, add_constraint, restructure, or add_edge_case)
-The Mutator agent applies ONE surgical fix to the skill prompt
-The Executor re-runs and re-scores the modified skill
-Changes are kept if the score improves, reverted if not
-Repeats until the target pass rate is reached or max rounds hit
-Architecture
-self-improving-agent-skills/
-├── backend/                 # FastAPI server + ADK optimization engine
-│   ├── app.py              # REST API endpoints + SSE streaming
-│   ├── adk_optimizer.py    # Multi-agent optimizer (Executor, Analyst, Mutator)
-│   └── requirements.txt
-├── frontend/               # Next.js + React + Tailwind
-│   ├── src/
-│   │   ├── app/            # Main page + layout
-│   │   └── components/     # Upload, Config, Running, Results steps
-│   ├── package.json
-│   └── *.config.ts
-│   ├── code-reviewer/
-│   └── content-writer/
-└── README.md
-Tech Stack
-Backend: Python 3.10+, FastAPI, Google ADK, Pydantic
-Frontend: Next.js 15, React 19, Tailwind CSS v4, Recharts
-AI: Google ADK multi-agent system with Gemini (gemini-3-flash-preview) — structured output via output_schema on Analyst and Mutator agents
-Real-time: Server-Sent Events (SSE) for live optimization progress
-Quick Start
-Backend Setup
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment (optional — the app will prompt for your API key in the UI)
-cp .env.example .env
-# Edit .env and add your GOOGLE_API_KEY
-
-# Run server
-python app.py
-# Server runs on http://localhost:8891
-Frontend Setup
-cd frontend
-
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-# App runs on http://localhost:3000
-Usage
-Get a Gemini API key from Google AI Studio
-Open http://localhost:3000
-Upload a skill folder as a .zip file (or try an example)
-Enter your Gemini API key
-Review and edit the generated test scenarios and evaluation criteria
-Click "Start Optimization" and watch the agents collaborate to improve your skill
-Download your improved skill when complete
-Skill Format
-Skills follow the agentskills.io specification:
-
-my-skill/
-├── SKILL.md           # Required: YAML frontmatter + instructions
-├── scripts/           # Optional: executable code
-├── references/        # Optional: additional docs
-└── assets/            # Optional: templates, resources
-Example SKILL.md:
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
+![React](https://img.shields.io/badge/React-19-61DAFB.svg)
+![Google ADK](https://img.shields.io/badge/Google-ADK-blue.svg)
+![Gemini](https://img.shields.io/badge/Gemini-AI-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 ---
-name: my-skill
-description: What this skill does and when to use it
+
+## 📖 Overview
+
+**Self-Improving Agent Skills** is an AI-powered platform that automatically improves prompt-based agent skills through iterative optimization.
+
+Built with **Google Agent Development Kit (ADK)** and **Gemini**, the application enables users to upload an agent skill, automatically generate evaluation scenarios, test performance, identify weaknesses, and continuously improve the prompt using a team of specialized AI agents.
+
+Instead of manually tweaking prompts, the system intelligently evaluates and refines them until the desired performance is achieved.
+
+---
+
+# ✨ Features
+
+- 📂 Upload Agent Skills (.zip or folder)
+- 🤖 Automatic Test Scenario Generation
+- ✅ Binary Evaluation Criteria Generation
+- 🧠 Multi-Agent Optimization Pipeline
+- 📊 Performance Scoring
+- 🔄 Iterative Prompt Improvement
+- ⚡ Live Optimization Progress (SSE)
+- 📜 Detailed Changelog
+- 📥 Download Improved Skill
+- 🌙 Modern Responsive UI
+- 🔐 Gemini API Integration
+
+---
+
+# 🧠 Multi-Agent Architecture
+
+The optimization workflow consists of **three specialized AI agents**.
+
+| Agent | Responsibility |
+|--------|---------------|
+| 🟢 Executor | Runs the skill, generates test cases, evaluates outputs, and calculates scores |
+| 🔵 Analyst | Diagnoses failures, identifies prompt weaknesses, and recommends improvement strategies |
+| 🟣 Mutator | Applies one targeted modification to the prompt based on Analyst recommendations |
+
+---
+
+# 🔄 Optimization Workflow
+
+```text
+Upload Skill
+      │
+      ▼
+Generate Test Scenarios
+      │
+      ▼
+Run Skill
+      │
+      ▼
+Evaluate Results
+      │
+      ▼
+Analyze Failures
+      │
+      ▼
+Improve Prompt
+      │
+      ▼
+Re-test
+      │
+      ▼
+Better Score?
+   ┌──────┴──────┐
+   │             │
+  Yes            No
+   │             │
+Keep Change   Revert Change
+      │
+      ▼
+Repeat Until Target Score
+```
+
+---
+
+# 🏗️ Project Structure
+
+```
+self-improving-agent-skills/
+
+│
+├── backend/
+│   ├── app.py
+│   ├── adk_optimizer.py
+│   ├── executor_agent.py
+│   ├── analyst_agent.py
+│   ├── mutator_agent.py
+│   ├── requirements.txt
+│   └── .env.example
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   └── lib/
+│   ├── package.json
+│   └── tailwind.config.ts
+│
+├── examples/
+├── README.md
+└── LICENSE
+```
+
+---
+
+# ⚙️ Tech Stack
+
+### Backend
+
+- Python 3.10+
+- FastAPI
+- Google ADK
+- Pydantic
+- Uvicorn
+
+### Frontend
+
+- Next.js 15
+- React 19
+- Tailwind CSS v4
+- TypeScript
+- Recharts
+
+### AI
+
+- Google Gemini
+- Google Agent Development Kit (ADK)
+
+### Real-Time Communication
+
+- Server-Sent Events (SSE)
+
+---
+
+# 🚀 Quick Start
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/self-improving-agent-skills.git
+
+cd self-improving-agent-skills
+```
+
+---
+
+## Backend Setup
+
+```bash
+cd backend
+
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+cp .env.example .env
+```
+
+Add your Gemini API key:
+
+```
+GOOGLE_API_KEY=YOUR_API_KEY
+```
+
+Start the backend:
+
+```bash
+python app.py
+```
+
+Runs on:
+
+```
+http://localhost:8891
+```
+
+---
+
+## Frontend Setup
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+Runs on:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 📂 Skill Format
+
+Skills follow the **agentskills.io** specification.
+
+```
+my-skill/
+
+├── SKILL.md
+├── scripts/
+├── references/
+└── assets/
+```
+
+Example:
+
+```yaml
+---
+name: Example Skill
+description: Example description
 license: MIT
+
 metadata:
-  author: your-name
+  author: John Doe
   version: "1.0"
 ---
 
-# My Skill
+# Example Skill
 
-Your skill instructions here...
-Trying it
-Zip any skill folder and upload it — for instance this repo's own project-graveyard:
+Your prompt goes here...
+```
 
-cd agent_skills
-zip -r project-graveyard.zip project-graveyard/
-The app's "examples" picker also lists sibling skills from this repo automatically — real skills, not toys.
+---
 
-How the Multi-Agent Optimization Works
-1. Analysis Phase
-The Executor agent analyzes your skill and generates:
+# 📡 API Endpoints
 
-3-4 diverse test scenarios
-4-6 binary evaluation criteria (yes/no questions)
-You can edit, add, or remove scenarios and criteria before optimization begins.
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/upload` | Upload Skill |
+| POST | `/api/analyze` | Generate Tests |
+| POST | `/api/start/{id}` | Start Optimization |
+| GET | `/api/stream/{id}` | Live Progress |
+| POST | `/api/stop/{id}` | Stop Optimization |
+| GET | `/api/download/{id}` | Download Skill |
+| GET | `/api/examples` | Example Skills |
+| GET | `/health` | Health Check |
 
-2. Baseline Run
-The Executor agent runs the skill against all scenarios and scores each output against all evaluation criteria. This establishes the starting score.
+---
 
-3. Optimization Loop
-For each round, the three agents collaborate:
+# 📈 Optimization Loop
 
-Executor runs the skill against all test scenarios and scores the outputs
-Analyst examines failures, identifies root cause, and selects a mutation strategy (returns structured JSON via output_schema)
-Mutator applies ONE specific change to improve the skill (returns structured JSON via output_schema)
-Executor re-runs and re-scores the modified skill
-Score is compared — keep the change if improved, revert if not
-Repeat until target pass rate or max rounds reached
-4. Output
-Improved SKILL.md with all successful changes applied
-Detailed changelog of what changed and why
-Performance comparison (baseline vs final)
-API Endpoints
-Method	Endpoint	Description
-POST	/api/upload	Upload skill zip file (max 10MB, text files only)
-POST	/api/upload-files	Upload multiple files (folder upload)
-POST	/api/analyze	Generate scenarios and evals (requires Gemini API key)
-POST	/api/regenerate	Regenerate scenarios and evals
-POST	/api/update-config	Save user's selected/edited config
-POST	/api/start/{session_id}	Start optimization
-GET	/api/stream/{session_id}	SSE stream of optimization progress
-POST	/api/stop/{session_id}	Stop optimization
-GET	/api/download/{session_id}	Download improved skill
-GET	/api/examples	List available example skills
-POST	/api/examples/{name}/load	Load an example skill
-GET	/api/status/{session_id}	Poll-based status endpoint
-GET	/health	Health check
-Configuration
-Backend
-The Gemini API key is passed from the frontend with each request. Optionally set GOOGLE_API_KEY in .env for local development. Server runs on port 8891.
+The optimization process follows an iterative cycle:
 
-Upload limits:
+1. Upload Skill
+2. Analyze Prompt
+3. Generate Test Cases
+4. Execute Skill
+5. Evaluate Output
+6. Detect Weaknesses
+7. Improve Prompt
+8. Re-run Evaluation
+9. Keep Better Version
+10. Repeat Until Target Score
 
-10MB max total upload size
-1MB max per file
-50 max files per upload
-Text files only (.md, .txt, .json, .yaml, .py, .js, .ts, etc.)
-Sessions expire after 1 hour automatically.
+---
 
-Frontend
-API key is entered in the UI, stored in component state (not persisted), and sent with each request. The key is passed to the backend which sets GOOGLE_API_KEY for ADK agent authentication.
+# 📊 Performance Metrics
 
-Optimization Parameters
-In RunningStep.tsx, adjust max_rounds (capped at 50):
+The platform tracks:
 
-body: JSON.stringify({
-  max_rounds: 20,  // Default: 20, max: 50
-}),
-In adk_optimizer.py, adjust the model:
+- Overall Pass Rate
+- Failed Tests
+- Successful Mutations
+- Optimization Rounds
+- Prompt Quality Score
+- Execution Time
+- Improvement Percentage
 
-def __init__(self, api_key: str, model: str = "gemini-3-flash-preview"):
-Development
-Backend Tests
-cd backend
-python -c "from adk_optimizer import SkillOptimizer; print('OK')"
-Frontend Build
-cd frontend
-npm run build
-Live Development
-Both servers support hot reload. Edit code and see changes immediately.
+---
 
-Based on Karpathy's Autoresearch
-This tool applies Andrej Karpathy's autoresearch methodology (using LLMs to iteratively improve their own prompts) to agent skills. The key insight: rather than manually tweaking prompts, define success criteria and let the AI optimize itself — now powered by a team of specialized ADK agents.
+# 🔒 Configuration
 
-Original concept: https://github.com/karpathy/autoresearch
+### Upload Limits
+
+- Maximum Upload Size: **10 MB**
+- Maximum File Size: **1 MB**
+- Maximum Files: **50**
+- Supported Text Files:
+  - .md
+  - .txt
+  - .json
+  - .yaml
+  - .py
+  - .js
+  - .ts
+
+---
+
+# 💡 Use Cases
+
+- AI Prompt Optimization
+- Agent Skill Evaluation
+- Prompt Engineering
+- Autonomous Prompt Improvement
+- AI Agent Benchmarking
+- Research Experiments
+- LLM Workflow Testing
+
+---
+
+# 🛣️ Roadmap
+
+- [ ] OpenAI Models
+- [ ] Claude Support
+- [ ] Local LLM Support
+- [ ] Docker Deployment
+- [ ] Kubernetes Support
+- [ ] Team Collaboration
+- [ ] Prompt Versioning
+- [ ] Dashboard Analytics
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+
+2. Create a feature branch
+
+```bash
+git checkout -b feature-name
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add feature"
+```
+
+4. Push to GitHub
+
+```bash
+git push origin feature-name
+```
+
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# 🙌 Acknowledgements
+
+- Google Agent Development Kit (ADK)
+- Google Gemini
+- FastAPI
+- Next.js
+- React
+- Tailwind CSS
+- Pydantic
+
+---
+
+## ⭐ Support
+
+If you found this project useful, please consider giving it a **⭐ Star** on GitHub.
+
+It helps the project reach more developers and encourages future improvements.
+
+---
+
+<div align="center">
+
+### 🚀 Build Better AI Agents with Automated Prompt Optimization
+
+**Made with ❤️ using Google ADK, Gemini, FastAPI & Next.js**
+
+</div>
